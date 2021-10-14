@@ -24,11 +24,18 @@ func init() {
 
 // CondDebug() is the implementation of a global debug function. If it was turned on using
 // CondDebugSet(true), then the string is shown to stderr. Else, no output is created.
-func CondDebug(msg string) {
+func CondDebugln(msg ...string) {
 	if globalDebug.Load().(bool) {
 		fmt.Fprintln(os.Stderr, msg)
 	}
 }
+
+func CondDebug(msg ...string) {
+	if globalDebug.Load().(bool) {
+		fmt.Fprint(os.Stderr, msg)
+	}
+}
+
 
 // CondDebugSet(val bool) allows us to turn debug on/off.
 func CondDebugSet(val bool) {
