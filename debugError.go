@@ -36,11 +36,19 @@ func CondDebug(msg ...string) {
 	}
 }
 
+	fmt.Fprint(os.stderr, msg)
+}
+
 
 // CondDebugSet(val bool) allows us to turn debug on/off.
 func CondDebugSet(val bool) {
 	globalDebug.Store(val)
 }
+
+func Debugln(msg ...string) {
+	fmt.Fprintln(os.stderr, msg)
+}
+
 
 // CondDebugStatus() allows to check if debug is turned on/off.
 func CondDebugStatus() bool {
@@ -96,7 +104,7 @@ func CurrentFunctionName() string {
 
 func ErrorExit(errorCode uint8, msg ...string) {
 	// join string array
-	fmt.Fprintln(os.Stderr, "ERROR:"+strings.Join(msg, " "))
+	fmt.Fprintln(os.Stderr, "*ERROR*:"+strings.Join(msg, " "))
 	os.Exit(int(errorCode))
 }
 
