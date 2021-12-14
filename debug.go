@@ -44,6 +44,10 @@ import (
 // never be set directly.
 var globalDebug atomic.Value
 
+// outputWriter defines the default output channel. It can be changed if required.
+
+var OutputWriter io.Writer = os.Stderr
+
 // init() is always executed at the startup of the application. It makes sure that
 // the global debug functionality has a defined state: off ⇔ false.
 func init() {
@@ -54,13 +58,13 @@ func init() {
 // CondDebugSet(true), then the string is shown to stderr. Else, no output is created.
 func CondDebugln(msg ...string) {
 	if globalDebug.Load().(bool) {
-		fmt.Fprintln(os.Stderr, msg)
+		fmt.Fprintln(OutputWriter, msg)
 	}
 }
 
 func CondDebug(msg ...string) {
 	if globalDebug.Load().(bool) {
-		fmt.Fprint(os.Stderr, msg)
+		fmt.Fprint(OutputWriter, msg)
 	}
 }
 
@@ -70,7 +74,7 @@ func CondDebugSet(val bool) {
 }
 
 func Debug(msg ...string) {
-	fmt.Fprint(os.Stderr, msg)
+	fmt.Fprint(OutputWriter, msg)
 }
 
 func Debugln(msg ...string) {
@@ -88,12 +92,12 @@ func CaptureOutput(f func()) (stderr string, stdout string) {
 	//fmt.Println("in captureOutput")
 	rerr, werr, err := os.Pipe()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error creating error pipe\n")
+		fmt.Fprintf(OutputWriter, "error creating error pipe\n")
 		os.Exit(1)
 	}
 	rout, wout, err := os.Pipe()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error creating output pipe\n")
+		fmt.Fprintf(OutputWriter, "error creating output pipe\n")
 		os.Exit(1)
 	}
 
@@ -101,21 +105,22 @@ func CaptureOutput(f func()) (stderr string, stdout string) {
 	errbuf := bytes.NewBuffer(nil)
 
 	olderr := os.Stderr
+	oldOutputWriter := OutputWriter
 	oldout := os.Stdout
 
 	os.Stderr = werr
+	OutputWriter = werr // we also have to reset OutputWriter, so that CaptureOutput also works for the above routines.
 	os.Stdout = wout
 	f()
 	werr.Close()
 	wout.Close()
 
 	os.Stderr = olderr
+	OutputWriter = oldOutputWriter
 	os.Stdout = oldout
 	io.Copy(errbuf, rerr)
 	io.Copy(outbuf, rout)
 
-	//fmt.Printf("Copied bytes: %d\n", buf.Len())
-	//fmt.Printf("Contents: %s\n", string(buf.Bytes()))
 	rerr.Close()
 	rout.Close()
 	return string(errbuf.Bytes()), string(outbuf.Bytes())
