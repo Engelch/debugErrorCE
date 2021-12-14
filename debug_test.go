@@ -1,14 +1,8 @@
 package debugErrorCE
 
 import (
-	"io"
-	"os"
 	"testing"
 )
-
-var rerr2 *io.PipeReader
-var werr2 *io.PipeWriter
-var olderr *os.File
 
 const (
 	debug int = iota
