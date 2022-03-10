@@ -31,4 +31,10 @@ func ErrorExit(errorCode uint8, msg ...string) {
 	os.Exit(int(errorCode))
 }
 
+func ExitIfError(err error, exitcode uint8, msg string) {
+	if err != nil {
+		ErrorExit(exitcode, msg+":"+err.Error())
+	}
+}
+
 // EOF
