@@ -11,10 +11,8 @@ import (
 )
 
 var logInitialised = false
-var loggerInfo *syslog.Writer
-var loggerWarn *syslog.Writer
-var loggerError *syslog.Writer
 var stringLog = false
+var stag string
 
 // verifyLogInitialised panics if log is not initialised.
 func verifyLogInitialised() {
@@ -27,19 +25,7 @@ func verifyLogInitialised() {
 func LogInit(tag string) {
 	logInitialised = true
 	stringLog = false
-	var err error
-	loggerInfo, err = syslog.New(syslog.LOG_INFO, "tag")
-	if err != nil {
-		panic("Cannot initialise loggerInfo")
-	}
-	loggerWarn, err = syslog.New(syslog.LOG_WARNING, "tag")
-	if err != nil {
-		panic("Cannot initialise loggerWarn")
-	}
-	loggerError, err = syslog.New(syslog.LOG_ERR, "tag")
-	if err != nil {
-		panic("Cannot initialise loggerError")
-	}
+	stag = tag
 }
 
 // LogStringInit does not use syslog (for dockerised environments. Instead, it writes all messages to stderr)
@@ -50,31 +36,36 @@ func LogStringInit() {
 }
 
 // doLog handles the actual writing of the logging message
-func doLog(msg string, syslogWriter *syslog.Writer) {
+func doLog(msg string, prio syslog.Priority) {
 	if stringLog {
 		_, _ = fmt.Fprintln(os.Stderr, msg)
 	} else {
-		log.SetOutput(syslogWriter)
+		syslogger, err := syslog.New(prio, stag)
+		if err != nil {
+			panic("Cannot initialise syslog")
+		}
+		log.SetOutput(syslogger)
 		log.Println(msg)
+		syslogger.Close() // flushing
 	}
 }
 
 // LogErr creates a message preprended with ERROR to syslog and stderr, but tries to continue execution.
 func LogErr(msg string) {
 	verifyLogInitialised()
-	doLog("ERROR:"+time.Now().UTC().Format(time.RFC3339)+":"+msg, loggerError)
+	doLog("ERROR:"+time.Now().UTC().Format(time.RFC3339)+":"+msg, syslog.LOG_ERR)
 }
 
 // LogWarn creates a syslog and STDERR message labeled with WARNING.
 func LogWarn(msg string) {
 	verifyLogInitialised()
-	doLog("Warning:"+time.Now().UTC().Format(time.RFC3339)+":"+msg, loggerWarn)
+	doLog("Warning:"+time.Now().UTC().Format(time.RFC3339)+":"+msg, syslog.LOG_WARNING)
 }
 
 // LogInfo creates an info error message to syslog and STDERR.
 func LogInfo(msg string) {
 	verifyLogInitialised()
-	doLog("info:"+time.Now().UTC().Format(time.RFC3339)+":"+msg, loggerInfo)
+	doLog("info:"+time.Now().UTC().Format(time.RFC3339)+":"+msg, syslog.LOG_INFO)
 }
 
 // EOF
