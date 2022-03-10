@@ -21,8 +21,11 @@
 package debugErrorCE
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"os"
+	"runtime"
 	"sync/atomic"
 )
 
@@ -31,12 +34,6 @@ import (
 // - Docker
 // - Kubernetes
 // - Linux systemd
-
-import (
-	"bytes"
-	"io"
-	"runtime"
-)
 
 // threat-safe implementation
 // todo hide variable by closure, PRIO: low
@@ -78,7 +75,7 @@ func Debug(msg ...string) {
 }
 
 func Debugln(msg ...string) {
-	fmt.Fprintln(os.Stderr, msg)
+	fmt.Fprintln(OutputWriter, msg)
 }
 
 // CondDebugStatus() allows to check if debug is turned on/off.
