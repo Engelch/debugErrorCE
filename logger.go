@@ -30,15 +30,16 @@ func LogInit(tag string) {
 
 // LogStringInit does not use syslog (for dockerised environments. Instead, it writes all messages to stderr)
 // This is suited for dockerised environments.
-func LogStringInit() {
+func LogStringInit(tag string) {
 	logInitialised = true
 	stringLog = true
+	stag = tag
 }
 
 // doLog handles the actual writing of the logging message
 func doLog(msg string, prio syslog.Priority) {
 	if stringLog {
-		_, _ = fmt.Fprintln(os.Stderr, msg)
+		_, _ = fmt.Fprintln(os.Stderr, stag+"::"+msg)
 	} else {
 		syslogger, err := syslog.New(prio, stag)
 		if err != nil {
