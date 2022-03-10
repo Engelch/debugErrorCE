@@ -27,7 +27,11 @@ import (
 
 func ErrorExit(errorCode uint8, msg ...string) {
 	// join string array
-	Debug("*ERROR*:" + strings.Join(msg, " "))
+   str := strings.Join(msg, " ")
+   if ! strings.HasSuffix(str, "\n") {
+      str = str + "\n"
+   } 
+	Debug("*ERROR*:" + str)
 	os.Exit(int(errorCode))
 }
 
