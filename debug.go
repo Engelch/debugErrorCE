@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package debugErrorCE
+package debugerrorce
 
 import (
 	"bytes"
@@ -41,8 +41,7 @@ import (
 // never be set directly.
 var globalDebug atomic.Value
 
-// outputWriter defines the default output channel. It can be changed if required.
-
+// OutputWriter defines the default output channel. It can be changed if required.
 var OutputWriter io.Writer = os.Stderr
 
 // init() is always executed at the startup of the application. It makes sure that
@@ -51,7 +50,7 @@ func init() {
 	globalDebug.Store(false)
 }
 
-// CondDebug() is the implementation of a global debug function. If it was turned on using
+// CondDebugln is the implementation of a global debug function. If it was turned on using
 // CondDebugSet(true), then the string is shown to stderr. Else, no output is created.
 func CondDebugln(msg ...string) {
 	if globalDebug.Load().(bool) {
@@ -59,26 +58,29 @@ func CondDebugln(msg ...string) {
 	}
 }
 
+// CondDebug outputs if debug is set without an added newline at the EOL.
 func CondDebug(msg ...string) {
 	if globalDebug.Load().(bool) {
 		fmt.Fprint(OutputWriter, msg)
 	}
 }
 
-// CondDebugSet(val bool) allows us to turn debug on/off.
+// CondDebugSet allows us to turn debug on/off.
 func CondDebugSet(val bool) {
 	globalDebug.Store(val)
 }
 
+// Debug outputs a message without adding a newline at the EOL
 func Debug(msg ...string) {
 	fmt.Fprint(OutputWriter, msg)
 }
 
+// Debugln outputs a message with adding a newline at the EOL
 func Debugln(msg ...string) {
 	fmt.Fprintln(OutputWriter, msg)
 }
 
-// CondDebugStatus() allows to check if debug is turned on/off.
+// CondDebugStatus allows to check if debug is turned on/off.
 func CondDebugStatus() bool {
 	return globalDebug.Load().(bool)
 }
@@ -123,7 +125,7 @@ func CaptureOutput(f func()) (stderr string, stdout string) {
 	return string(errbuf.Bytes()), string(outbuf.Bytes())
 }
 
-// CurrentFunctionName() returns the name of the current function being executed.
+// CurrentFunctionName returns the name of the current function being executed.
 func CurrentFunctionName() string {
 	pc := make([]uintptr, 1) // at least 1 entry needed
 	runtime.Callers(2, pc)

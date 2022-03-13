@@ -1,4 +1,4 @@
-package debugErrorCE
+package debugerrorce
 
 import (
 	"testing"

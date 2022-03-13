@@ -1,4 +1,4 @@
-package debugErrorCE
+package debugerrorce
 
 // small helper class for logging + writing to stderr
 

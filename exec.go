@@ -1,4 +1,4 @@
-package debugErrorCE
+package debugerrorce
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// execCmd is a helper to execute an external application. If the exit status of this command is non-zero, then an
+// ExecCmd is a helper to execute an external application. If the exit status of this command is non-zero, then an
 // error is returned, else nil.
 func ExecCmd(cmd string, args ...string) error {
 	CondDebug("Spawning command:" + cmd + " " + strings.Join(args, " "))

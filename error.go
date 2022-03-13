@@ -18,23 +18,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package debugErrorCE
+package debugerrorce
 
 import (
 	"os"
 	"strings"
 )
 
+// ErrorExit exits the application with the specified error code. The output is
+// written to the assigned output writer, by default stderr.
 func ErrorExit(errorCode uint8, msg ...string) {
 	// join string array
-   str := strings.Join(msg, " ")
-   if ! strings.HasSuffix(str, "\n") {
-      str = str + "\n"
-   } 
+	str := strings.Join(msg, " ")
+	if !strings.HasSuffix(str, "\n") {
+		str = str + "\n"
+	}
 	Debug("*ERROR*:" + str)
 	os.Exit(int(errorCode))
 }
 
+// ExitIfError exists using ErrorExit if the supplied err is not nil. In such a case,
+// the error message of err will be added to the message.
 func ExitIfError(err error, exitcode uint8, msg string) {
 	if err != nil {
 		ErrorExit(exitcode, msg+":"+err.Error())
