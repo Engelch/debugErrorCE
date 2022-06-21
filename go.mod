@@ -1,3 +1,3 @@
-module github.com/engelch/debugerrorce/v2
+module github.com/engelch/debugerrorce/
 
 go 1.17
