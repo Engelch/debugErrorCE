@@ -39,11 +39,11 @@ func ExecutableReachableByPath(cmd ...string) error {
 }
 
 func ExecOutputCmd(cmd string) ([]byte, error) {
-	var err error
 	if out, err := exec.Command("bash", "-c", cmd).Output(); err == nil {
 		return out, nil
+	} else {
+		return nil, errors.New("ERROR:" + CurrentFunctionName() + ":" + err.Error())
 	}
-	return nil, errors.New("ERROR:" + CurrentFunctionName() + ":" + err.Error())
 }
 
 // EOF

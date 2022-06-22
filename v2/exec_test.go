@@ -22,7 +22,7 @@ func TestExecutableReachableByPath1(t *testing.T) {
 // ===================================================================
 
 // expects that CWD is writable
-func TestExecCmd0(t *testing.T) {
+func TestExecNoOutputCmd0(t *testing.T) {
 	// we expect that the binary jfdaslkjd09jlk does not exist
 	err := ExecNoOutputCmd("rm -f bla")
 	assert.Nil(t, err)
@@ -33,6 +33,12 @@ func TestExecCmd0(t *testing.T) {
 	err = ExecNoOutputCmd("rm -f bla")
 	assert.Nil(t, err)
 	assert.Equal(t, false, IsExistingFile("bla"))
+}
+
+func TestExecNoOutputCmd1(t *testing.T) {
+	// we expect that the binary jfdaslkjd09jlk does not exist
+	err := ExecNoOutputCmd("/bjalsdl")
+	assert.NotNil(t, err)
 }
 
 // ===================================================================
@@ -50,6 +56,12 @@ func TestExecOutCmd1(t *testing.T) {
 	assert.Nil(t, err)
 	outNormalised := strings.Fields(string(out))[0]
 	assert.Equal(t, outNormalised, "5")
+}
+
+func TestExecOutCmd2(t *testing.T) {
+	// we expect that the binary jfdaslkjd09jlk does not exist
+	_, err := ExecOutputCmd("ehcNotExisting jkdajld")
+	assert.NotNil(t, err)
 }
 
 // EOF
