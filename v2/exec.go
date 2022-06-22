@@ -17,4 +17,15 @@ func ExecCmd(cmd string, args ...string) error {
 	return nil
 }
 
+// ExecutableReachableByPath checks for all given input if the input is executable and can be found by
+// the current setting of the PATH variable.
+func ExecutableReachableByPath(cmd ...string) error {
+	for _, val := range cmd {
+		if _, err := exec.LookPath(val); err != nil {
+			return errors.New("ERROR:" + CurrentFunctionName() + ":command not found:" + val)
+		}
+	}
+	return nil
+}
+
 // EOF
