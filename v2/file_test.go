@@ -58,4 +58,22 @@ func TestIsExisting4(t *testing.T) {
 	assert.Equal(t, false, IsExistingFile("/dev/null8308409380"))
 }
 
+// =================================
+
+func TestIsDirectory0(t *testing.T) {
+	assert.Equal(t, false, IsDirectory("file_test.go"))
+}
+
+func TestIsDirectory1(t *testing.T) {
+	assert.Equal(t, true, IsDirectory("."))
+}
+
+func TestIsDirectory2(t *testing.T) {
+	assert.Equal(t, true, IsDirectory("/"))
+}
+
+func TestIsDirectory3(t *testing.T) {
+	assert.Equal(t, false, IsDirectory("/dev/null"))
+}
+
 // EOF

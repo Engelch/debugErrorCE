@@ -21,3 +21,10 @@ func IsExistingFile(filename string) bool {
 	}
 	return false
 }
+
+func IsDirectory(filename string) bool {
+	if stat, err := os.Stat(filename); err == nil && stat.IsDir() {
+		return true
+	}
+	return false
+}

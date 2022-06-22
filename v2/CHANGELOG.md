@@ -2,6 +2,10 @@
 
 LIFO documentation style
 
+## V2.3
+
+- new IsDirectory(filename string) bool
+  
 ## V2.2
 
 - ExecCmd is DEPRECATED, to be replaced by ExecNoOutputCmd
