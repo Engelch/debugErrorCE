@@ -1,4 +1,4 @@
-package go_libs
+package debugerrorce
 
 import (
 	"crypto"
