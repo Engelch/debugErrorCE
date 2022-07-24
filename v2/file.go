@@ -1,6 +1,7 @@
 package debugerrorce
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"path/filepath"
