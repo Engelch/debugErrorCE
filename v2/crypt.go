@@ -11,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 )
 
 const bitSize = 4096 // RSA keysize
@@ -134,14 +135,27 @@ func Verify115Base64String(key *rsa.PublicKey, b64 string, msg string) error {
 // to read multiple keys from the byte array. Only the first PEM block is processed.
 func Pem2RsaPrivateKey(der []byte) (*rsa.PrivateKey, error) {
 	block, _ := pem.Decode(der)
-	if block == nil || block.Type != "RSA PRIVATE KEY" {
+	if block == nil || !strings.Contains(block.Type, "PRIVATE KEY") {
+		if block == nil {
+			CondDebugln(CurrentFunctionName() + ":returned decoded block is nil\n")
+		}
+		CondDebugln(CurrentFunctionName()+":block type is:", block.Type)
 		return nil, errors.New(CurrentFunctionName() + ":failed to decode PEM block containing private key")
 	}
-	pub, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	prv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
-		return nil, errors.New(CurrentFunctionName() + ":failed to parse PEM block:" + err.Error())
+		key, err := x509.ParsePKCS8PrivateKey(block.Bytes) // now let's check pkcs8
+		if err != nil {
+			return nil, errors.New(CurrentFunctionName() + ":failed to parse PEM block as PKCS[18]:" + err.Error())
+		}
+		switch key.(type) {
+		case *rsa.PrivateKey:
+			prv = key.(*rsa.PrivateKey)
+		default:
+			return nil, errors.New(CurrentFunctionName() + ":failed to convert read key of type")
+		}
 	}
-	return pub, nil
+	return prv, nil
 }
 
 // LoadPrivateKey load a PEM-encoded RSA private key from a file
