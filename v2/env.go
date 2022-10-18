@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 )
 
 // GetEnvValue retrieves a value from the ENV if exists, otherwise
@@ -23,7 +24,7 @@ func GetEnvValueOrDefaultBool(key string, defaultValue bool) bool {
 	if err != nil {
 		return defaultValue
 	}
-	return val == "true"
+	return strings.ToLower(val) == "true"
 }
 
 // GetEnvValueOrDefaultString returns the ENV string value for the given key or the default one
@@ -57,3 +58,5 @@ func FatalGetEnvValue(key string) string {
 	}
 	return val
 }
+
+// eof
