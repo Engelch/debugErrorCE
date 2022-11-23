@@ -216,12 +216,21 @@ func Pem2RsaPublicKey(der []byte) (*rsa.PublicKey, error) {
 }
 
 // LoadPublicKey load a PEM-encoded RSA public key from a file
-func LoadPublicKey(filename string) (*rsa.PublicKey, error) {
+func LoadRsaPublicKey(filename string) (*rsa.PublicKey, error) {
 	buf, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, errors.New(CurrentFunctionName() + ":reading file:" + err.Error())
 	}
 	return Pem2RsaPublicKey(buf)
+}
+
+func DebugRsaPublicKey(pubKey *rsa.PublicKey) {
+    if pubKey == nil {
+        fmt.Fprintf(os.Stderr, "ERROR: no key supplied to " + CurrentFunctionName())
+        return
+    }
+    fmt.Println("Exponent", pubKey.E)
+    fmt.Println("Modulus", pubKey.N)
 }
 
 // TODO VerifySignature
