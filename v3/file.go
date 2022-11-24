@@ -2,6 +2,7 @@ package debugerrorce
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -63,6 +64,34 @@ func ByteArray2ReponseWriter(file http.ResponseWriter, bytes []byte) error {
 		if err != nil { // should also never happen
 			return errors.New(CurrentFunctionName() + ":" + err.Error())
 		}
+	}
+	return nil
+}
+
+// IsExecAny is called by isExecutableCmd and is a predicate to check if the file is executable by anyone.
+// TODO: more complex if we do not run as root; currently, we run as root, not complete as FS could be mounted with noexec :-)
+func isExecAny(fileinfo os.FileInfo) bool {
+	de.CondDebug(fmt.Sprintf("fileinfo:%v", fileinfo))
+	de.CondDebug(fmt.Sprintf("perms:%#v", fileinfo.Mode().Perm()))
+	return fileinfo.Mode().Perm()&0111 != 0
+}
+
+// IsExecutableCmd is a predicate checking if the given parameter represents an executable file.
+// It returns nil in the positive case. Otherwise, an error is returned.
+func IsExecutableCmd(cmd string) error {
+	de.CondDebug("checking for executable:" + cmd)
+	stat, err := os.Stat(cmd)
+	if err != nil {
+		return errors.New("Error with supplied command:" + cmd + ":" + err.Error())
+	}
+	if stat.Mode().IsDir() {
+		return errors.New("Error command is a directory:" + cmd)
+	}
+	if !stat.Mode().IsRegular() {
+		return errors.New("Error command is not a regular file:" + cmd)
+	}
+	if !isExecAny(stat) {
+		return errors.New("Error command is not executable:" + cmd)
 	}
 	return nil
 }
