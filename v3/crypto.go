@@ -17,6 +17,23 @@ import (
 
 // const bitSize = 4096 // RSA keysize
 
+const RSA4096 = 4096
+const RSA2048 = 2048
+
+func RsaPrivateKey2Sha256Digest(prvKey *rsa.PrivateKey) (string, error) {
+	if prvKey == nil {
+		return "", errors.New(CurrentFunctionName() + ":ERROR:supplied key is nil")
+	}
+	return fmt.Sprintf("%x", string(Bytes2sha256([]byte(fmt.Sprintf("%X,%X", prvKey.PublicKey.E, prvKey.PublicKey.N))))), nil
+}
+
+func RsaPublicKey2Sha256Digest(pubKey *rsa.PublicKey) (string, error) {
+	if pubKey == nil {
+		return "", errors.New(CurrentFunctionName() + ":ERROR:supplied key is nil")
+	}
+	return fmt.Sprintf("%x", string(Bytes2sha256([]byte(fmt.Sprintf("%X,%X", pubKey.E, pubKey.N))))), nil
+}
+
 func Pem2CSR(bytes []byte) (*x509.CertificateRequest, error) {
 	block, _ := pem.Decode(bytes)
 	if block == nil {
@@ -225,12 +242,12 @@ func LoadRsaPublicKey(filename string) (*rsa.PublicKey, error) {
 }
 
 func DebugRsaPublicKey(pubKey *rsa.PublicKey) {
-    if pubKey == nil {
-        fmt.Fprintf(os.Stderr, "ERROR: no key supplied to " + CurrentFunctionName())
-        return
-    }
-    fmt.Println("Exponent", pubKey.E)
-    fmt.Println("Modulus", pubKey.N)
+	if pubKey == nil {
+		fmt.Fprintf(os.Stderr, "ERROR: no key supplied to "+CurrentFunctionName())
+		return
+	}
+	fmt.Println("Exponent", pubKey.E)
+	fmt.Println("Modulus", pubKey.N)
 }
 
 // TODO VerifySignature
