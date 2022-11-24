@@ -1,4 +1,4 @@
-module github.com/engelch/debugerrorce/v2
+module github.com/engelch/debugerrorce/v3
 
 go 1.18
 
