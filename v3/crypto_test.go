@@ -3,6 +3,7 @@ package debugerrorce
 import (
 	"encoding/pem"
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -10,6 +11,19 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestStrSha256(t *testing.T) {
+	const test = "bla"
+	const testExpected = "4df3c3f68fcc83b27e9d42c90431a72499f17875c81a599b566c9889b9696703"
+	assert.Equal(t, testExpected, fmt.Sprintf("%x", Str2sha256(test)), "Values not equal")
+}
+
+func TestStrSha256Base64(t *testing.T) {
+	const test = "bla"
+	//CondDebugSet(true)
+	const testExpected = "TfPD9o/Mg7J+nULJBDGnJJnxeHXIGlmbVmyYiblpZwM="
+	assert.Equal(t, testExpected, Bytea2b64(Str2sha256(test)), "Values not equal")
+}
 
 func TestPemToPubKey(t *testing.T) {
 	const publicKey = `

@@ -15,6 +15,34 @@ import (
 	"strings"
 )
 
+// =====================================================================
+// sha256, base64 routines
+// =====================================================================
+
+func Str2sha256(str string) []byte {
+	byteaFromStr := []byte(str) // convert string to []byte aka bytea
+	msgHash := sha256.New()
+	_, _ = msgHash.Write(byteaFromStr) // todo no error handling, but error is very unlike
+	sha256sum := msgHash.Sum(nil)
+	CondDebug(fmt.Sprintf("sha256 of string as hex    is %x\n", sha256sum))
+	CondDebug(fmt.Sprintf("sha256 of string as binary is %v\n", sha256sum))
+	return sha256sum
+}
+
+// create the sha256 sum of str, don't treat it as hex but as binary and
+// take the base64 of it
+func Bytea2b64(ba []byte) string {
+	eb := make([]byte, base64.StdEncoding.EncodedLen(len(ba)))
+	base64.StdEncoding.Encode(eb, ba)
+	CondDebug(fmt.Sprintf("b64 as string is   %s\n", string(eb)))
+	CondDebug(fmt.Sprintf("b64 as byte-seq is %x\n", eb))
+	return string(eb)
+}
+
+// =====================================================================
+// RSA routines
+// =====================================================================
+
 // const bitSize = 4096 // RSA keysize
 
 const RSA4096 = 4096
