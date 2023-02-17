@@ -1,7 +1,6 @@
 package debugerrorce
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -35,7 +34,7 @@ func TestFormatString2String(t *testing.T) {
 	res, err := Format(FormatText, demo)
 	assert.Nil(t, err, "Format returned err")
 	assert.Equal(t, "blabla", res)
-	fmt.Println("text is:", res)
+	// fmt.Println("text is:", res)
 }
 
 func TestFormatString2JSON(t *testing.T) {
@@ -43,7 +42,7 @@ func TestFormatString2JSON(t *testing.T) {
 	res, err := Format(FormatJSON, demo)
 	assert.Nil(t, err, "Format returned err")
 	assert.Equal(t, "{\"blabla\"}", res)
-	fmt.Println("json is:", res)
+	// fmt.Println("json is:", res)
 }
 
 func TestFormatString2PrettyJSON(t *testing.T) {
@@ -51,51 +50,51 @@ func TestFormatString2PrettyJSON(t *testing.T) {
 	res, err := Format(FormatPrettyJson, demo)
 	assert.Nil(t, err, "Format returned err")
 	assert.Equal(t, "{ \"blabla\" }", res)
-	fmt.Println("json is:", res)
+	// fmt.Println("json is:", res)
 }
 
 func TestFormatStruct2Text(t *testing.T) {
 	dest := FormatText
-	res, err := Format(dest, a)
+	_, err := Format(dest, a)
 	assert.Nil(t, err, "Format returned err")
-	fmt.Println("a struct is", res)
+	// fmt.Println("a struct is", res)
 }
 
 func TestFormatStruct2JSON(t *testing.T) {
 	dest := FormatJSON
-	res, err := Format(dest, a)
+	_, err := Format(dest, a)
 	assert.Nil(t, err, "Format returned err")
-	fmt.Println("a struct is", res)
+	// fmt.Println("a struct is", res)
 }
 
 func TestFormatStruct2PrettyJSON(t *testing.T) {
 	dest := FormatPrettyJson
-	res, err := Format(dest, a)
+	_, err := Format(dest, a)
 	assert.Nil(t, err, "Format returned err")
-	fmt.Println("a struct is", res)
+	// fmt.Println("a struct is", res)
 }
 
 // nested struct ===============
 
 func TestFormatStructB2Text(t *testing.T) {
 	dest := FormatText
-	res, err := Format(dest, b)
+	_, err := Format(dest, b)
 	assert.Nil(t, err, "Format returned err")
-	fmt.Println("b struct is", res)
+	// fmt.Println("b struct is", res)
 }
 
 func TestFormatStructB2JSON(t *testing.T) {
 	dest := FormatJSON
-	res, err := Format(dest, b)
+	_, err := Format(dest, b)
 	assert.Nil(t, err, "Format returned err")
-	fmt.Println("b struct is", res)
+	// fmt.Println("b struct is", res)
 }
 
 func TestFormatStructB2PrettyJSON(t *testing.T) {
 	dest := FormatPrettyJson
-	res, err := Format(dest, b)
+	_, err := Format(dest, b)
 	assert.Nil(t, err, "Format returned err")
-	fmt.Println("b struct is", res)
+	// fmt.Println("b struct is", res)
 }
 
 // maps ===============
@@ -103,17 +102,17 @@ func TestFormatStructB2PrettyJSON(t *testing.T) {
 func TestFormatMap2String(t *testing.T) {
 	c := map[string]int{"key1": 1, "key2": 42}
 	dest := FormatText
-	res, err := Format(dest, c)
+	_, err := Format(dest, c)
 	assert.Nil(t, err, "Format returned err")
-	fmt.Println("c map is", res)
+	// fmt.Println("c map is", res)
 }
 
 func TestFormatMap2PrettyJSON(t *testing.T) {
 	c := map[string]int{"key1": 1, "key2": 42}
 	dest := FormatPrettyJson
-	res, err := Format(dest, c)
+	_, err := Format(dest, c)
 	assert.Nil(t, err, "Format returned err")
-	fmt.Println("c map is", res)
+	// fmt.Println("c map is", res)
 }
 
 // EOF
