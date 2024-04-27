@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"runtime"
 	"sync/atomic"
 )
@@ -129,8 +130,9 @@ func CaptureOutput(f func()) (stderr string, stdout string) {
 func CurrentFunctionName() string {
 	pc := make([]uintptr, 1) // at least 1 entry needed
 	runtime.Callers(2, pc)
-	f := runtime.FuncForPC(pc[0])
-	return f.Name()
+	f := runtime.FuncForPC(pc[0]).Name()
+	f = filepath.Base(f) // strip the filename and remove the package
+	return f
 }
 
 // EOF
