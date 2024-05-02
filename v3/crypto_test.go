@@ -25,6 +25,12 @@ func TestStrSha256Base64(t *testing.T) {
 	assert.Equal(t, testExpected, Bytea2b64(Str2sha256(test)), "Values not equal")
 }
 
+func TestString2Md5(t *testing.T) {
+	// a0cdcc72e656541f132bf96747ee17dc	# echo -n 'blablue'| md5sum
+	const test = "blablue"
+	assert.Equal(t, "a0cdcc72e656541f132bf96747ee17dc", String2md5(test))
+}
+
 func TestPemToPubKey(t *testing.T) {
 	const publicKey = `
 		MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA9sc3FCBC3x9kTPpKTzl/

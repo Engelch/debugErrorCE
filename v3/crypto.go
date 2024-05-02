@@ -2,6 +2,7 @@ package debugerrorce
 
 import (
 	"crypto"
+	"crypto/md5"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
@@ -37,6 +38,11 @@ func Bytea2b64(ba []byte) string {
 	CondDebug(fmt.Sprintf("b64 as string is   %s\n", string(eb)))
 	CondDebug(fmt.Sprintf("b64 as byte-seq is %x\n", eb))
 	return string(eb)
+}
+
+func String2md5(str string) string {
+	data := []byte(str)
+	return fmt.Sprintf("%x", md5.Sum(data))
 }
 
 // =====================================================================
