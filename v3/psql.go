@@ -133,3 +133,16 @@ func PsqlVerifyTablePermissions(dbPool *pgxpool.Pool, user string, perms PsqlTab
 	}
 	return nil
 }
+
+// PsqlGetUser returns the user name from a postgresql connection string.
+func PsqlGetUser(constr string) (string, error) {
+	if !strings.HasPrefix(constr, "postgresql://") {
+		return "", errors.New("connection string does not start with postgresql://")
+	}
+	dbUser := constr[13:]
+	index := strings.Index(dbUser, ":")
+	if index == -1 {
+		return "", errors.New("Cannot find user separation in:" + dbUser)
+	}
+	return dbUser[:index], nil
+}
