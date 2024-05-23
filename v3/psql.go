@@ -110,27 +110,28 @@ func PsqlVerifyTablePermissions(dbPool *pgxpool.Pool, user string, perms PsqlTab
 		if !ArrayContains(tablesExisting, table) {
 			return errors.New("DBMS_ERROR:table " + table + " is not in the current database")
 		}
+		sqlRequest = "select relacl from pg_class where relname = '" + table + "'"
+		err = dbPool.QueryRow(context.Background(), sqlRequest).Scan(&dbmsAnswer)
+		if err != nil {
+			return errors.New("DBMS_ERROR request:" + sqlRequest + ":" + err.Error())
+		}
+		CondDebugln("DB returned:" + dbmsAnswer)
+		if !strings.Contains(dbmsAnswer, user+"=") {
+			return errors.New("DBMS_ERROR:answer for " + table + " does not list user:" + user + "=")
+		}
+		dbmsAnswer = dbmsAnswer[strings.Index(dbmsAnswer, user+"=")+1:]
+		fmt.Println("dbmsAnswer is now:" + dbmsAnswer)
+		if !strings.Contains(dbmsAnswer, "/") {
+			return errors.New("DBMS_ERROR:answer for " + table + " does not contain /")
+		}
+		dbmsAnswer = dbmsAnswer[:strings.Index(dbmsAnswer, "/")]
+		CondDebugln("DB answer processed:" + dbmsAnswer)
 		for _, perm := range perms {
-			sqlRequest = "select relacl from pg_class where relname = '" + table + "'"
-			err = dbPool.QueryRow(context.Background(), sqlRequest).Scan(&dbmsAnswer)
-			if err != nil {
-				return errors.New("DBMS_ERROR request:" + sqlRequest + ":" + err.Error())
-			}
-			CondDebugln("DB returned:" + dbmsAnswer)
-			if !strings.Contains(dbmsAnswer, user+"=") {
-				return errors.New("DBMS_ERROR:answer for " + table + " does not list user:" + user + "=")
-			}
-			dbmsAnswer = dbmsAnswer[strings.Index(dbmsAnswer, user+"=")+1:]
-			fmt.Println("dbmsAnswer is now:" + dbmsAnswer)
-			if !strings.Contains(dbmsAnswer, "/") {
-				return errors.New("DBMS_ERROR:answer for " + table + " does not contain /")
-			}
-			dbmsAnswer = dbmsAnswer[:strings.Index(dbmsAnswer, "/")]
-			CondDebugln("DB answer processed:" + dbmsAnswer)
 			if !strings.Contains(dbmsAnswer, string(perm)) {
 				return errors.New("TABLE_ERROR:table:" + table + ":does not have permission:" + string(perm) + ":for user:" + user)
 			}
 		}
+		CondDebugln(CurrentFunctionName() + ":permission checks passed for table:" + table)
 	}
 	return nil
 }
