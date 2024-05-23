@@ -85,13 +85,14 @@ func PsqlVerifyTablePermissions(dbPool *pgxpool.Pool, user string, perms PsqlTab
 	var dbmsAnswer string
 	var err error
 	var tablesExisting []string
-	isAlNumUnderscore := regexp.MustCompile(`^[A-Za-z][_A-Za-z0-9]+$`).MatchString
+	const isAlnumRegexpr = `^[_A-Za-z][_A-Za-z0-9]+$`
+	isAlNum := regexp.MustCompile(isAlnumRegexpr).MatchString
 	if user == "" {
 		return errors.New("USAGE_ERROR:cannot check perms for unknown user")
 	}
 	user = strings.ToLower(user)
-	if !isAlNumUnderscore(user) {
-		return errors.New("USAGE_ERROR:user name is not alNum and/or does not start with a letter")
+	if !isAlNum(user) {
+		return errors.New("USAGE_ERROR:user name not conforming with:" + isAlnumRegexpr)
 	}
 	if dbPool == nil {
 		return errors.New("USAGE_ERROR:dbPool is nil")
@@ -103,8 +104,8 @@ func PsqlVerifyTablePermissions(dbPool *pgxpool.Pool, user string, perms PsqlTab
 	}
 	fmt.Printf("table names existing in DB are:\n\t%s\n", strings.Join(tablesExisting, "\n\t"))
 	for _, table := range tables {
-		if !isAlNumUnderscore(table) {
-			return errors.New("USAGE_ERROR:table name " + table + " is not allowed")
+		if !isAlNum(table) {
+			return errors.New("USAGE_ERROR:table name" + table + " not conforming with:" + isAlnumRegexpr)
 		}
 		if !ArrayContains(tablesExisting, table) {
 			return errors.New("DBMS_ERROR:table " + table + " is not in the current database")
@@ -117,7 +118,7 @@ func PsqlVerifyTablePermissions(dbPool *pgxpool.Pool, user string, perms PsqlTab
 			}
 			CondDebugln("DB returned:" + dbmsAnswer)
 			if !strings.Contains(dbmsAnswer, user+"=") {
-				return errors.New("DBMS_ERROR:answer for " + table + " does not contain:" + user + "=")
+				return errors.New("DBMS_ERROR:answer for " + table + " does not list user:" + user + "=")
 			}
 			dbmsAnswer = dbmsAnswer[strings.Index(dbmsAnswer, user+"=")+1:]
 			fmt.Println("dbmsAnswer is now:" + dbmsAnswer)
